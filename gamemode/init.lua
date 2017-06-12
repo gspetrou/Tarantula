@@ -1,8 +1,9 @@
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-
 include( "shared.lua" )
 
+-- Player Hooks
+---------------
 function GM:PlayerInitialSpawn(ply)
 	trn.Roles.SetupSpectator(ply)
 end
@@ -50,6 +51,9 @@ function GM:PlayerSetHandsModels(ply, ent)
 	end
 end
 
+
+-- Round Hooks
+--------------
 hook.Add("trn.Rounds.Initialize", "trn", function()
 	if trn.Rounds.ShouldStart() then
 		trn.Rounds.EnterPrep()
@@ -100,6 +104,12 @@ hook.Add("trn.Rounds.ShouldEnd", "trn", function()
 	return false
 end)
 
+hook.Add("trn.Rounds.EnteredPrep", "trn", function()
+	--trn.Player.SetDefaultModelColor(trn.Player.GetRandomPlayerColor())
+	--trn.MapHandler.ResetMap()
+	trn.Roles.Clear()
+end)
+
 hook.Add("trn.Rounds.RoundStarted", "trn", function()
 	for i, v in ipairs(trn.Roles.GetDeadPlayers()) do
 		trn.Roles.ForceSpawn(v) -- Technically the round already started.
@@ -112,13 +122,6 @@ hook.Add("trn.Rounds.RoundStarted", "trn", function()
 	end)
 end)
 
-hook.Add("trn.Rounds.EnteredPrep", "trn", function()
-	--trn.Player.SetDefaultModelColor(trn.Player.GetRandomPlayerColor())
-	--trn.MapHandler.ResetMap()
-	trn.Roles.Clear()
-end)
-
---------------
 -- Role Hooks
 --------------
 hook.Add("trn.Roles.PlayerBecameSpectator", "trn", function(ply)
