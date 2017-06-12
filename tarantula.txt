@@ -1,6 +1,0 @@
-"ozarrp"
-{
-	"title"		"2017 gamemode"
-	"base"		"base"
-	"menusystem"	"1"
-}

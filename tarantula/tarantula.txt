@@ -1,0 +1,6 @@
+"tarantula"
+{
+	"title"		"Tarantula"
+	"base"		"sandbox"
+	"menusystem"	"1"
+}
