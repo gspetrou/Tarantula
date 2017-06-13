@@ -56,8 +56,8 @@ function trn.Roles.ForceSpawn(ply, resetSpawn)
 	ply:UnSpectate()
 	ply.trn_InFlyMode = false
 	
-	hook.Call("trn.Roles.PlayerSpawned", nil, ply, resetSpawn, true)
 	ply:SetNoDraw(false) -- For some reason players spawn with no-draw set. This will undo that.
+	hook.Call("trn.Roles.PlayerSpawned", nil, ply, resetSpawn, true)
 end
 
 ----------------------------
@@ -192,17 +192,11 @@ end
 ----------------------------
 -- Desc:		Sets the role of a player but only for the given recipients.
 -- Arg One:		ROLE_ enum, what role this player should have.
--- Arg Two:		Table, player, or true. Table if more than one player should know. Player for a single person. True for everyone to know this person's role changed.
-function PLAYER:SetRoleClientside(role, recipients)
+function PLAYER:SetRoleClientside(role)
 	net.Start("trn.Roles.PlayerSwitchedRole")
 		net.WriteUInt(role, 3)
 		net.WritePlayer(self)
-
-	if recipients == true then
-		net.Broadcast()
-	else
-		net.Send(recipients)
-	end
+	net.Broadcast()
 end
 
 --------------------
@@ -210,10 +204,9 @@ end
 --------------------
 -- Desc:		Sets the player's role and networks it to the given recipients.
 -- Arg One:		ROLE_ enum, to set the player to.
--- Arg Two:		Table, player, or true. Table if more than one player should know. Player for a single person. True for everyone to know this person's role changed.
-function PLAYER:ForceRole(role, recipients)
+function PLAYER:ForceRole(role)
 	self:SetRole(role)
-	self:SetRoleClientside(role, recipients)
+	self:SetRoleClientside(role)
 end
 
 -- Helper functions for setting a player's role after round start.
@@ -221,17 +214,11 @@ function PLAYER:ForceSpectator()
 	if self:Alive() then
 		self:Kill()
 	end
-	self:ForceRole(ROLE_SPECTATOR, true)
+	self:ForceRole(ROLE_SPECTATOR)
 end
-function PLAYER:ForceBlue()
-	self:ForceRole(ROLE_BLUE, true)
-end
-function PLAYER:ForceRed()
-	self:ForceRole(ROLE_RED, true)
-end
-function PLAYER:ForceWaiting()
-	self:ForceRole(ROLE_WAITING, true)
-end
+function PLAYER:ForceBlue() self:ForceRole(ROLE_BLUE) end
+function PLAYER:ForceRed() self:ForceRole(ROLE_RED) end
+function PLAYER:ForceWaiting() self:ForceRole(ROLE_WAITING) end
 
 -------------------
 -- trn.Roles.Clear
@@ -306,8 +293,9 @@ function trn.Roles.Sync()
 	local reds = trn.Roles.GetReds()
 	local blues = trn.Roles.GetBlues()
 	local spectators = trn.Roles.GetSpectators()
+
+	-- Send order: reds, blue, spectators.
 	net.Start("trn.Roles.Sync")
-		-- Send order: reds, blue, spectators.
 		net.WriteUInt(#reds, 7)
 		for i, v in ipairs(reds) do
 			net.WritePlayer(v)
