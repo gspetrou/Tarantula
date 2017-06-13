@@ -17,7 +17,7 @@ function GM:PlayerSpawn(ply)
 			trn.Roles.SpawnAsPlayer(ply, true)
 		end
 	end
-	
+
 	self:PlayerSetModel(ply)
 	ply:SetupHands()					-- Get c_ hands working.
 end
@@ -62,7 +62,7 @@ hook.Add("trn.Rounds.ShouldStart", "trn", function()
 	if GetConVar("trn_dev_preventstart"):GetBool() or #trn.Roles.GetActivePlayers() < GetConVar("trn_minimum_players"):GetInt() then
 		return false
 	end
-	
+
 	return true
 end)
 
@@ -136,9 +136,9 @@ hook.Add("trn.Roles.PlayerSpawned", "trn", function(ply, resetSpawn, wasForced)
 	if resetSpawn then
 	--	trn.MapHandler.PutPlayerAtRandomSpawnPoint(ply)
 	end
-	
-	--trn.Weapons.StripCompletely(ply)
-	--trn.Weapons.GiveStarterWeapons(ply)
+
+	trn.Weapons.StripCompletely(ply)
+	trn.Weapons.GiveStarterWeapons(ply)
 end)
 
 hook.Add("trn.Roles.PlayerSpawnedInFlyMode", "trn", function(ply)
